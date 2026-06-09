@@ -1,0 +1,1 @@
+<x-layout><h1 class="text-2xl font-bold">Dashboard Partner</h1><p>Status verifikasi: {{ $partner?->verification_status ?? 'belum ada profil' }}</p><div class="mt-4 flex gap-3"><a href="{{ route('partner.properties.index') }}">Kelola Properti</a><a href="{{ route('partner.bookings.index') }}">Booking Masuk</a></div></x-layout>

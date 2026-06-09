@@ -1,0 +1,1 @@
+<x-layout><h1 class="text-2xl font-bold">Dashboard Wisatawan</h1><p>Kelola booking, favorit, dan profil perjalanan Anda.</p><div class="mt-4 flex gap-3"><a href="/bookings">Riwayat Booking</a><a href="/favorites">Favorit</a></div></x-layout>

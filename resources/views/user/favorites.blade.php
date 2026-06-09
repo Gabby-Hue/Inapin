@@ -1,0 +1,1 @@
+<x-layout><h1 class="text-2xl font-bold mb-4">Favorit</h1>@foreach($favorites as $favorite)<div class="bg-white p-4 rounded mb-3"><a href="{{ route('properties.show',$favorite->property) }}">{{ $favorite->property->name }}</a><form method="post" action="{{ route('favorites.destroy',$favorite) }}">@csrf @method('DELETE')<button>Hapus</button></form></div>@endforeach</x-layout>
