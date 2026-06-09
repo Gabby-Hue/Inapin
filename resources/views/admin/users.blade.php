@@ -1,0 +1,1 @@
+<x-layout><h1 class="text-2xl font-bold mb-4">Users</h1>@foreach($users as $user)<div class="bg-white p-3 rounded mb-2">{{ $user->name }} • {{ $user->email }} • {{ $user->role }}</div>@endforeach</x-layout>

@@ -1,0 +1,1 @@
+<x-layout><h1 class="text-2xl font-bold mb-4">Login</h1><form method="post" class="grid gap-3 max-w-md">@csrf<input name="email" type="email" placeholder="Email" class="border p-2"><input name="password" type="password" placeholder="Password" class="border p-2"><button class="bg-emerald-700 text-white p-2 rounded">Masuk</button></form></x-layout>
