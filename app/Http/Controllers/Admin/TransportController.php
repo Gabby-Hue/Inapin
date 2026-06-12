@@ -16,7 +16,9 @@ class TransportController extends Controller
     public function storeAirport(Request $request)
     {
         $this->admin();
-        Airport::create($request->validate(['name' => ['required'], 'city' => ['required'], 'code' => ['required', 'unique:airports,code']]));
+        $data = $request->validate(['name' => ['required'], 'city' => ['required'], 'province' => ['nullable'], 'code' => ['required', 'unique:airports,code']]);
+        $data['province'] ??= $data['city'];
+        Airport::create($data);
         return back()->with('status', 'Bandara dibuat.');
     }
 
@@ -33,7 +35,10 @@ class TransportController extends Controller
     public function storePort(Request $request)
     {
         $this->admin();
-        Port::create($request->validate(['name' => ['required'], 'city' => ['required']]));
+        $data = $request->validate(['name' => ['required'], 'city' => ['required'], 'province' => ['nullable'], 'code' => ['nullable', 'unique:ports,code']]);
+        $data['province'] ??= $data['city'];
+        $data['code'] ??= 'ID-'.strtoupper(substr(md5($data['name'].$data['city'].microtime()), 0, 6));
+        Port::create($data);
         return back()->with('status', 'Pelabuhan dibuat.');
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Partner;
 
+use App\Enums\PartnerStatus;
+use App\Enums\PropertyStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
@@ -29,7 +31,7 @@ class PropertyController extends Controller
         $partner = $this->authorizePartner();
         $data = $this->validated($request);
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
-        $data['status'] = 'pending';
+        $data['status'] = PropertyStatus::PENDING;
         $property = $partner->properties()->create($data);
         $this->storeImages($request, $property);
         return redirect()->route('partner.properties.index')->with('status', 'Properti dibuat dan menunggu persetujuan admin.');
@@ -45,7 +47,7 @@ class PropertyController extends Controller
     {
         $this->authorizeOwner($property);
         $data = $this->validated($request);
-        $data['status'] = 'pending';
+        $data['status'] = PropertyStatus::PENDING;
         $property->update($data);
         $this->storeImages($request, $property);
         return redirect()->route('partner.properties.index')->with('status', 'Properti diperbarui dan kembali menunggu persetujuan.');
@@ -65,12 +67,18 @@ class PropertyController extends Controller
             'description' => ['required', 'string'],
             'category' => ['required', Rule::in(Property::CATEGORIES)],
             'city' => ['required', 'string', 'max:255'],
+            'province' => ['nullable', 'string', 'max:255'],
+            'bedroom_count' => ['nullable', 'integer', 'min:1'],
+            'bathroom_count' => ['nullable', 'integer', 'min:1'],
             'address' => ['required', 'string'],
             'price_per_night' => ['required', 'integer', 'min:1'],
             'capacity' => ['required', 'integer', 'min:1'],
             'facilities' => ['nullable', 'string'],
             'images.*' => ['nullable', 'image', 'max:2048'],
         ]);
+        $data['province'] ??= $data['city'];
+        $data['bedroom_count'] ??= 1;
+        $data['bathroom_count'] ??= 1;
         $data['facilities'] = collect(explode(',', $data['facilities'] ?? ''))->map(fn ($v) => trim($v))->filter()->values()->all();
         return $data;
     }
@@ -78,7 +86,7 @@ class PropertyController extends Controller
     private function authorizePartner()
     {
         abort_unless(auth()->user()->role === 'partner' && auth()->user()->partner, 403);
-        abort_unless(auth()->user()->partner->verification_status === 'approved', 403, 'Partner belum diverifikasi admin.');
+        abort_unless(auth()->user()->partner->status === PartnerStatus::APPROVED, 403, 'Partner belum diverifikasi admin.');
         return auth()->user()->partner;
     }
 

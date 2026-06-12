@@ -19,7 +19,7 @@ class ModerationController extends Controller
     {
         $this->admin();
         $data = $request->validate(['verification_status' => ['required', 'in:pending,approved,rejected']]);
-        $partner->update($data);
+        $partner->update(['status' => $data['verification_status']]);
         return back()->with('status', 'Status partner diperbarui.');
     }
 
