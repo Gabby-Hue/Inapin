@@ -2,14 +2,42 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Database\Factories\PropertyImageFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['property_id', 'image_path'])]
 class PropertyImage extends Model
 {
-    public $timestamps = false;
-    const CREATED_AT = 'created_at';
+    /** @use HasFactory<PropertyImageFactory> */
+    use HasFactory;
 
-    public function property() { return $this->belongsTo(Property::class); }
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'property_id',
+        'image_path',
+        'alt_text',
+        'sort_order',
+        'is_primary',
+    ];
+
+    /**
+     * @return BelongsTo<Property, $this>
+     */
+    public function property(): BelongsTo
+    {
+        return $this->belongsTo(Property::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_primary' => 'boolean',
+        ];
+    }
 }

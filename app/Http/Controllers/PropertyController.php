@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PropertyStatus;
 use App\Models\Property;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class PropertyController extends Controller
 
     public function show(Property $property)
     {
-        abort_unless($property->status === 'approved' || optional(auth()->user())->role === 'admin', 404);
+        abort_unless($property->status === PropertyStatus::APPROVED || optional(auth()->user())->role === 'admin', 404);
         return view('properties.show', ['property' => $property->load(['reviews.user', 'partner.user'])]);
     }
 

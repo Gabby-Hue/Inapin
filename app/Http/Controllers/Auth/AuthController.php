@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\PartnerStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Models\User;
@@ -24,6 +25,8 @@ class AuthController extends Controller
             'role' => ['nullable', 'in:user,partner'],
             'business_name' => ['required_if:role,partner', 'nullable', 'string', 'max:255'],
             'business_description' => ['nullable', 'string'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'province' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -39,6 +42,10 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'business_name' => $data['business_name'],
                 'business_description' => $data['business_description'] ?? null,
+                'status' => PartnerStatus::PENDING,
+                'contact_phone' => $data['phone'] ?? null,
+                'city' => $data['city'] ?? 'Jakarta',
+                'province' => $data['province'] ?? $data['city'] ?? 'DKI Jakarta',
             ]);
         }
 

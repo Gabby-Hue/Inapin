@@ -2,15 +2,54 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Database\Factories\FlightFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['airline', 'origin_airport_id', 'destination_airport_id', 'departure_time', 'arrival_time', 'price'])]
 class Flight extends Model
 {
+    /** @use HasFactory<FlightFactory> */
     use HasFactory;
-    protected function casts(): array { return ['departure_time' => 'datetime', 'arrival_time' => 'datetime']; }
-    public function originAirport() { return $this->belongsTo(Airport::class, 'origin_airport_id'); }
-    public function destinationAirport() { return $this->belongsTo(Airport::class, 'destination_airport_id'); }
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'airline',
+        'flight_number',
+        'origin_airport_id',
+        'destination_airport_id',
+        'departure_time',
+        'arrival_time',
+        'price',
+    ];
+
+    /**
+     * @return BelongsTo<Airport, $this>
+     */
+    public function originAirport(): BelongsTo
+    {
+        return $this->belongsTo(Airport::class, 'origin_airport_id');
+    }
+
+    /**
+     * @return BelongsTo<Airport, $this>
+     */
+    public function destinationAirport(): BelongsTo
+    {
+        return $this->belongsTo(Airport::class, 'destination_airport_id');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'departure_time' => 'datetime',
+            'arrival_time' => 'datetime',
+            'price' => 'integer',
+        ];
+    }
 }

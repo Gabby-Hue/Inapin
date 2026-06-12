@@ -2,15 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Database\Factories\FavoriteFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'property_id'])]
 class Favorite extends Model
 {
-    public $timestamps = false;
-    const CREATED_AT = 'created_at';
+    /** @use HasFactory<FavoriteFactory> */
+    use HasFactory;
 
-    public function property() { return $this->belongsTo(Property::class); }
-    public function user() { return $this->belongsTo(User::class); }
+    public const UPDATED_AT = null;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'property_id',
+    ];
+
+    /**
+     * @return BelongsTo<Property, $this>
+     */
+    public function property(): BelongsTo
+    {
+        return $this->belongsTo(Property::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

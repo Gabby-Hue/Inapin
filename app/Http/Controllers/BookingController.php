@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingStatus;
+use App\Enums\PropertyStatus;
 use App\Models\Booking;
 use App\Models\Property;
 use Illuminate\Http\Request;
@@ -31,14 +33,16 @@ class BookingController extends Controller
         ]);
 
         $property = Property::findOrFail($data['property_id']);
-        abort_unless($property->status === 'approved', 403, 'Properti belum disetujui.');
+        abort_unless($property->status === PropertyStatus::APPROVED, 403, 'Properti belum disetujui.');
         abort_if((int) $data['guest_count'] > $property->capacity, 422, 'Jumlah tamu melebihi kapasitas properti.');
 
         $nights = Carbon::parse($data['check_in'])->diffInDays(Carbon::parse($data['check_out']));
         $booking = Booking::create($data + [
             'user_id' => auth()->id(),
             'total_price' => (int) $nights * $property->price_per_night,
-            'status' => 'pending',
+            'status' => BookingStatus::PENDING,
+            'guest_name' => auth()->user()->name,
+            'guest_phone' => auth()->user()->phone,
         ]);
 
         return redirect()->route('bookings.show', $booking)->with('status', 'Booking berhasil dibuat.');

@@ -2,21 +2,68 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use App\Enums\BookingStatus;
+use Database\Factories\BookingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['property_id', 'user_id', 'check_in', 'check_out', 'guest_count', 'total_price', 'status'])]
 class Booking extends Model
 {
+    /** @use HasFactory<BookingFactory> */
     use HasFactory;
 
-    protected function casts(): array
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'property_id',
+        'user_id',
+        'check_in',
+        'check_out',
+        'guest_count',
+        'total_price',
+        'status',
+        'guest_name',
+        'guest_phone',
+        'special_requests',
+    ];
+
+    /**
+     * @return BelongsTo<Property, $this>
+     */
+    public function property(): BelongsTo
     {
-        return ['check_in' => 'date', 'check_out' => 'date'];
+        return $this->belongsTo(Property::class);
     }
 
-    public function property() { return $this->belongsTo(Property::class); }
-    public function user() { return $this->belongsTo(User::class); }
-    public function review() { return $this->hasOne(Review::class); }
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return HasOne<Review, $this>
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'check_in' => 'date',
+            'check_out' => 'date',
+            'total_price' => 'integer',
+            'status' => BookingStatus::class,
+        ];
+    }
 }
